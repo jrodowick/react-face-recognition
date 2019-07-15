@@ -30,25 +30,31 @@ class App extends Component {
     this.state = {
       input: '',
       imageURL: '',
-      box: {}
+      box: []
     }
   }
 
   calculateFaceLocation = (data) => {
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById('input-image');
-    const width = Number(image.width);
-    const height = Number(image.height);
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - (clarifaiFace.right_col * width),
-      bottomRow: height - (clarifaiFace.bottom_row * height)
+    let faces = [];
+    let box = {};
+    const boxes = data.outputs[0].data.regions;
+    for(box of boxes) {
+      const clarifaiFace = box.region_info.bounding_box;
+      const image = document.getElementById('input-image');
+      const width = Number(image.width);
+      const height = Number(image.height);
+      faces.push({
+        leftCol: clarifaiFace.left_col * width,
+        topRow: clarifaiFace.top_row * height,
+        rightCol: width - (clarifaiFace.right_col * width),
+        bottomRow: height - (clarifaiFace.bottom_row * height)
+      })
     }
+    return faces;
   }
 
   displayFaceBox = (box) => {
-    console.log(box)
+    //console.log(box)
     this.setState({box: box})
   }
 
